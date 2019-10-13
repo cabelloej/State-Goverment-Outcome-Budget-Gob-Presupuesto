@@ -1,0 +1,65 @@
+              SET COLOR TO W+/B
+              STORE SPACE(LEN(CODIGO)) TO WCODIGO                                                                                                                                                                                                             
+              STORE SPACE(LEN(DESCRI)) TO WDESCRI
+              STORE SPACE(1)           TO WASIGNA
+              STORE SPACE(1)           TO WCOMPROMETE
+              STORE SPACE(1)           TO WCAUSA
+              STORE SPACE(1)           TO WPAGA
+              STORE 100 TO WSCRELIN                                                                                                                                                                                                                           
+              STORE .T. TO WACT                                                                                                                                                                                                                               
+              DO WHILE WACT                                                                                                                                                                                                                                   
+                 STORE WSCRELIN + 1 TO WSCRELIN                                                                                                                                                                                                               
+                 IF WSCRELIN > 18                                                                                                                                                                                                                             
+                    @ 7,1 CLEAR TO 18,78                                                                                                                                                                                                                      
+                    STORE 7 TO WSCRELIN                                                                                                                                                                                                                       
+                 ENDIF                                                                                                                                                                                                                                        
+                 @ WSCRELIN ,01  GET WCODIGO                                                                                                                                                                                                                  
+                 READ                                                                                                                                                                                                                                         
+                 IF WCODIGO = SPACE(LEN(CODIGO)) .OR.READKEY()=12.OR.READKEY()=268                                                                                                                                                                            
+                    STORE .F. TO WACT                                                                                                                                                                                                                         
+                    GO TOP                                                                                                                                                                                                                                    
+                    STORE RECNO() TO WINICIO                                                                                                                                                                                                                  
+                    STORE .T. TO FLAGJUMP                                                                                                                                                                                                                     
+                    STORE 0 TO WREVERSE                                                                                                                                                                                                                       
+                    LOOP                                                                                                                                                                                                                                      
+                 ENDIF                                                                                                                                                                                                                                        
+                 find &wcodigo
+                 if eof()
+                    ***
+                 else
+                    @ WSCRELIN ,10  SAY DESCRI
+                    STORE "CODIGO YA EXISTE. <ENTER>" TO MES
+                    DO AVISO WITH MES
+                    STORE WSCRELIN - 1  TO WSCRELIN
+                    LOOP
+                 ENDIF
+                 @ WSCRELIN ,10  GET WDESCRI
+                 @ WSCRELIN ,52  GET WASIGNA
+                 @ WSCRELIN ,57  GET WCOMPROMETE
+                 @ WSCRELIN ,62  GET WCAUSA
+                 @ WSCRELIN ,67  GET WPAGA
+                 read
+                 STORE "CONFORME ? (S/N)" TO TEX                                                                                                                                                                                                              
+                 STORE "SN" TO WCH                                                                                                                                                                                                                            
+                 DO PREGUNTA                                                                                                                                                                                                                                  
+                 IF WCH = "N"                                                                                                                                                                                                                                 
+                    STORE WSCRELIN - 1  TO WSCRELIN                                                                                                                                                                                                           
+                    LOOP                                                                                                                                                                                                                                      
+                 ENDIF                                                                                                                                                                                                                                        
+                 DO FILLOC
+                 APPEND BLANK
+                 UNLOCK
+                 do recloc                                                                                                                                                                                                                                    
+                 REPLACE CODIGO     WITH WCODIGO
+                 REPLACE DESCRI     WITH WDESCRI
+                 REPLACE ASIGNA     WITH WASIGNA
+                 REPLACE COMPROMETE WITH WCOMPROMETE
+                 REPLACE CAUSA      WITH WCAUSA
+                 REPLACE PAGA       WITH WPAGA
+                 REPLACE USERNAME   WITH WUSERCODE
+                 REPLACE USERDATE   WITH DATE()
+                 FLUSH                                                                                                                                                                                                                                        
+                 unlock 
+              ENDDO                                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                              
+
